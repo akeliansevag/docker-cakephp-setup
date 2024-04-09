@@ -1,0 +1,49 @@
+services:
+  cakephp-database:
+    image: mariadb
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - cakephp-network
+      - npm
+
+  cakephp-phpmyadmin:
+    image: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - cakephp-database
+    environment:
+      - PMA_HOST=cakephp-database
+    networks:
+      - cakephp-network
+      - npm
+    ports:
+      - 8888:80
+
+  cakephp-website:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./website:/var/www/html
+    networks:
+      - cakephp-network
+      - npm
+    user: '1000:1000'
+
+volumes:
+  db-data:
+networks:
+  cakephp-network:
+    driver: bridge
+  npm:
+    external: true
+    name: npm
