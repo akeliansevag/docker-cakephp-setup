@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.2-apache
 
 # Update and upgrade packages
 RUN apt-get update \
