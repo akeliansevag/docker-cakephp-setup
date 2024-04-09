@@ -32,6 +32,7 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
+    restart: unless-stopped
     volumes:
       - ./website:/var/www/html
     networks:
